@@ -1,24 +1,41 @@
 .container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 .entrance {
-    width: 100%;
-    height: calc(100vh - 165px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  width: 100%;
+  height: calc(100vh - 165px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .entranceBlock {
-    display: flex;
-    width: 100%;
-    max-width: 480px;
-    flex-direction: column;
-    button {
-        padding: 15px;
-        min-width: 144px;
-        margin: 10px 0;
-        text-transform: uppercase;
-    }
+  display: flex;
+  width: 100%;
+  max-width: 480px;
+  flex-direction: column;
+  button {
+    padding: 15px;
+    min-width: 144px;
+    margin: 10px 0;
+    text-transform: uppercase;
+  }
+  input {
+    padding: 15px;
+  }
+}
+
+.links {
+  width: 100%;
+  padding: 20px 0 0 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.spinnerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
