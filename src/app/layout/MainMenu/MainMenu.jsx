@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { logoutUser } from "@store/slices/authSlice";
@@ -13,6 +13,7 @@ const MainMenu = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const user = useSelector((state) => state.auth.user);
 
@@ -31,22 +32,28 @@ const MainMenu = () => {
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
 
+  console.log(location.pathname);
+
   return (
     <>
       <ul className={styles.menu}>
-        <li>
+        <li className={location.pathname === "/" ? styles.active : ""}>
           <Link to="/">Home</Link>
         </li>
         {user ? (
           <>
-            <li>
+            <li className={location.pathname === "/notes" ? styles.active : ""}>
               <Link to="/notes">Notes</Link>
             </li>
-            <li>
+            <li
+              className={
+                location.pathname === "/settings" ? styles.active : ""
+              }>
               <Link to="/settings">Settings</Link>
             </li>
             {user.role === "admin" && (
-              <li>
+              <li
+                className={location.pathname === "/users" ? styles.active : ""}>
                 <Link to="/users">Users</Link>
               </li>
             )}
@@ -58,10 +65,12 @@ const MainMenu = () => {
           </>
         ) : (
           <>
-            <li>
+            <li
+              className={location.pathname === "/signin" ? styles.active : ""}>
               <Link to="/signin">Sign In</Link>
             </li>
-            <li>
+            <li
+              className={location.pathname === "/signup" ? styles.active : ""}>
               <Link to="/signup">Sign Up</Link>
             </li>
           </>
