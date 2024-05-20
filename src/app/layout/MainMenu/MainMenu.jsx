@@ -32,8 +32,6 @@ const MainMenu = () => {
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
 
-  console.log(location.pathname);
-
   return (
     <>
       <ul className={styles.menu}>
