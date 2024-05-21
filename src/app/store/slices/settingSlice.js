@@ -1,18 +1,22 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+
 import {
   updateUserName,
   updateUserEmail,
   updateUserPassword,
 } from "@services/settingService";
+
 import {
   SETTINGS_UPDATE_NAME,
   SETTINGS_UPDATE_EMAIL,
   SETTINGS_UPDATE_PASSWORD,
 } from "@store/types/actionTypes";
 
+import { Statuses } from "../statuses/statuses";
+
 const initialState = {
   user: JSON.parse(localStorage.getItem("user")) || null,
-  status: "idle",
+  status: Statuses.IDLE,
   error: null,
 };
 
@@ -60,28 +64,42 @@ const settingsSlice = createSlice({
   reducers: {
     resetSettingsState: (state) => {
       state.user = null;
-      state.status = "idle";
+      state.status = Statuses.IDLE;
       state.error = null;
     },
   },
   extraReducers: (builder) => {
     builder
+      .addCase(updateName.pending, (state) => {
+        state.status = Statuses.LOADING;
+      })
       .addCase(updateName.fulfilled, (state, action) => {
+        state.status = Statuses.SUCCEEDED;
         state.user = action.payload;
-      })
-      .addCase(updateEmail.fulfilled, (state, action) => {
-        state.user = action.payload;
-      })
-      .addCase(updatePassword.fulfilled, (state) => {
-        state.status = "success";
       })
       .addCase(updateName.rejected, (state, action) => {
+        state.status = Statuses.FAILED;
         state.error = action.payload;
+      })
+      .addCase(updateEmail.pending, (state) => {
+        state.status = Statuses.LOADING;
+      })
+      .addCase(updateEmail.fulfilled, (state, action) => {
+        state.status = Statuses.SUCCEEDED;
+        state.user = action.payload;
       })
       .addCase(updateEmail.rejected, (state, action) => {
+        state.status = Statuses.FAILED;
         state.error = action.payload;
       })
+      .addCase(updatePassword.pending, (state) => {
+        state.status = Statuses.LOADING;
+      })
+      .addCase(updatePassword.fulfilled, (state) => {
+        state.status = Statuses.SUCCEEDED;
+      })
       .addCase(updatePassword.rejected, (state, action) => {
+        state.status = Statuses.FAILED;
         state.error = action.payload;
       });
   },

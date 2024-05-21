@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
+
+import { useDispatch, useSelector } from "react-redux";
+import { resetUserPassword } from "@store/slices/authSlice";
+import { Statuses } from "@store/statuses/statuses";
+import { getErrorAuthMessage } from "@utils/errors";
 
 import Button from "react-bootstrap/Button";
 import InputGroup from "react-bootstrap/InputGroup";
 import Alert from "react-bootstrap/Alert";
 import Spinner from "react-bootstrap/Spinner";
-
-import { resetUserPassword } from "@store/slices/authSlice";
 
 import styles from "./ForgotPassword.module.scss";
 
@@ -28,6 +30,7 @@ const validate = (values) => {
 const ForgotPassword = () => {
   const [emailSent, setEmailSent] = useState(false);
   const dispatch = useDispatch();
+  const { status, error } = useSelector((state) => state.auth);
 
   const formik = useFormik({
     initialValues: {
@@ -42,8 +45,10 @@ const ForgotPassword = () => {
           setEmailSent(true);
         })
         .catch((error) => {
-          console.log(error);
-          toast.error(`Failed to send password reset email: ${error.message}`);
+          const friendlyMessage = getErrorAuthMessage(error.code);
+          toast.error(
+            `Failed to send password reset email: ${friendlyMessage}`
+          );
         })
         .finally(() => {
           setSubmitting(false);
@@ -82,11 +87,16 @@ const ForgotPassword = () => {
                   </Alert>
                 ) : null}
               </InputGroup>
+              {status === Statuses.FAILED && (
+                <Alert key="danger" variant="danger">
+                  {getErrorAuthMessage(error)}
+                </Alert>
+              )}
               <Button
                 type="submit"
                 variant="success"
-                disabled={formik.isSubmitting}>
-                {formik.isSubmitting ? (
+                disabled={formik.isSubmitting || status === Statuses.LOADING}>
+                {formik.isSubmitting || status === Statuses.LOADING ? (
                   <Spinner animation="border" size="sm" />
                 ) : (
                   "Go"

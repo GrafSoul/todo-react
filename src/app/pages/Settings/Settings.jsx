@@ -1,26 +1,33 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
-import Button from "react-bootstrap/Button";
-import InputGroup from "react-bootstrap/InputGroup";
-import Spinner from "react-bootstrap/Spinner";
+
+import { Statuses } from "@store/statuses/statuses";
+import { useDispatch, useSelector } from "react-redux";
 import {
   updateName,
   updateEmail,
   updatePassword,
 } from "@store/slices/settingSlice";
+import { getErrorAuthMessage } from "@utils/errors";
+
+import Button from "react-bootstrap/Button";
+import InputGroup from "react-bootstrap/InputGroup";
+import Spinner from "react-bootstrap/Spinner";
+import Loading from "@components/Loading/Loading";
+
 import styles from "./Settings.module.scss";
 
 const Settings = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
+  const { user, status, error } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (user) {
-      dispatch({ type: "settings/updateUser", payload: user });
+    if (error) {
+      const friendlyMessage = getErrorAuthMessage(error);
+      toast.error(`Error: ${friendlyMessage}`);
     }
-  }, [user, dispatch]);
+  }, [error]);
 
   const formikName = useFormik({
     initialValues: {
@@ -34,7 +41,8 @@ const Settings = () => {
           toast.success("Name updated successfully!");
         })
         .catch((error) => {
-          toast.error(`Failed to update name: ${error}`);
+          const friendlyMessage = getErrorAuthMessage(error);
+          toast.error(`Failed to update name: ${friendlyMessage}`);
         })
         .finally(() => {
           setSubmitting(false);
@@ -57,7 +65,8 @@ const Settings = () => {
           toast.success("Email updated successfully!");
         })
         .catch((error) => {
-          toast.error(`Failed to update email: ${error}`);
+          const friendlyMessage = getErrorAuthMessage(error);
+          toast.error(`Failed to update email: ${friendlyMessage}`);
         })
         .finally(() => {
           setSubmitting(false);
@@ -90,7 +99,8 @@ const Settings = () => {
           toast.success("Password updated successfully!");
         })
         .catch((error) => {
-          toast.error(`Failed to update password: ${error}`);
+          const friendlyMessage = getErrorAuthMessage(error);
+          toast.error(`Failed to update password: ${friendlyMessage}`);
         })
         .finally(() => {
           setSubmitting(false);
@@ -98,16 +108,14 @@ const Settings = () => {
     },
   });
 
-  if (!user) {
-    return (
-      <div className={styles.spinnerContainer}>
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
-      </div>
-    );
+  if (status === Statuses.LOADING) {
+    return <Loading />;
   }
 
+  if (status === Statuses.FAILED) {
+    const friendlyMessage = getErrorAuthMessage(error);
+    return <div className="text-danger">Error: {friendlyMessage}</div>;
+  }
   return (
     <div className={styles.container}>
       <div className={styles.section}>

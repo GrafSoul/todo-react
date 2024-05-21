@@ -1,16 +1,17 @@
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
 import { useFormik } from "formik";
+
+import { useDispatch, useSelector } from "react-redux";
+import { Statuses } from "@store/statuses/statuses";
+import { registerUser } from "@store/slices/authSlice";
+import { getErrorAuthMessage } from "@utils/errors";
 
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Alert from "react-bootstrap/Alert";
 import Spinner from "react-bootstrap/Spinner";
-
-import { useDispatch } from "react-redux";
-import { registerUser } from "@store/slices/authSlice";
 
 import slyles from "./SingUp.module.scss";
 
@@ -39,9 +40,10 @@ const validate = (values) => {
   return errors;
 };
 
-const SingUp = () => {
+const SignUp = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { status, error } = useSelector((state) => state.auth);
 
   const formik = useFormik({
     initialValues: {
@@ -59,8 +61,8 @@ const SingUp = () => {
           navigate("/notes");
         })
         .catch((error) => {
-          console.log(error);
-          toast.error(`Registration failed: ${error}`);
+          const friendlyMessage = getErrorAuthMessage(error.code);
+          toast.error(`Registration failed: ${friendlyMessage}`);
         })
         .finally(() => {
           setSubmitting(false);
@@ -150,11 +152,16 @@ const SingUp = () => {
                 </Alert>
               ) : null}
             </InputGroup>
+            {status === Statuses.FAILED && (
+              <Alert key="danger" variant="danger">
+                {getErrorAuthMessage(error)}
+              </Alert>
+            )}
             <Button
               type="submit"
               variant="success"
-              disabled={formik.isSubmitting}>
-              {formik.isSubmitting ? (
+              disabled={formik.isSubmitting || status === Statuses.LOADING}>
+              {formik.isSubmitting || status === Statuses.LOADING ? (
                 <Spinner animation="border" size="sm" />
               ) : (
                 "Go"
@@ -170,4 +177,4 @@ const SingUp = () => {
   );
 };
 
-export default SingUp;
+export default SignUp;

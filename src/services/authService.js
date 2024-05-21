@@ -8,6 +8,7 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
+
 import { ref, set, get, child } from "firebase/database";
 
 export const register = async (email, password, displayName) => {

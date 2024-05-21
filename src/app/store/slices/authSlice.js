@@ -1,12 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { register, login, resetPassword, logout } from "@services/authService";
 import { resetSettingsState } from "./settingSlice";
+
 import {
   AUTH_REGISTER_USER,
   AUTH_LOGIN_USER,
   AUTH_RESET_PASSWORD,
   AUTH_LOGOUT_USER,
 } from "@store/types/actionTypes";
+
+import { Statuses } from "../statuses/statuses";
 
 const saveUserToLocalStorage = (user) => {
   localStorage.setItem("user", JSON.stringify(user));
@@ -71,37 +74,59 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     user: JSON.parse(localStorage.getItem("user")) || null,
-    status: "idle",
+    status: Statuses.IDLE,
     error: null,
   },
   reducers: {
     resetUserState: (state) => {
       state.user = null;
-      state.status = "idle";
+      state.status = Statuses.IDLE;
       state.error = null;
     },
   },
   extraReducers: (builder) => {
     builder
+      .addCase(registerUser.pending, (state) => {
+        state.status = Statuses.LOADING;
+      })
       .addCase(registerUser.fulfilled, (state, action) => {
+        state.status = Statuses.SUCCEEDED;
         state.user = action.payload;
-      })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.user = action.payload;
-      })
-      .addCase(logoutUser.fulfilled, (state) => {
-        state.user = null;
       })
       .addCase(registerUser.rejected, (state, action) => {
+        state.status = Statuses.FAILED;
         state.error = action.payload;
+      })
+      .addCase(loginUser.pending, (state) => {
+        state.status = Statuses.LOADING;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.status = Statuses.SUCCEEDED;
+        state.user = action.payload;
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.status = Statuses.FAILED;
         state.error = action.payload;
+      })
+      .addCase(resetUserPassword.pending, (state) => {
+        state.status = Statuses.LOADING;
+      })
+      .addCase(resetUserPassword.fulfilled, (state) => {
+        state.status = Statuses.SUCCEEDED;
       })
       .addCase(resetUserPassword.rejected, (state, action) => {
+        state.status = Statuses.FAILED;
         state.error = action.payload;
       })
+      .addCase(logoutUser.pending, (state) => {
+        state.status = Statuses.LOADING;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.status = Statuses.SUCCEEDED;
+        state.user = null;
+      })
       .addCase(logoutUser.rejected, (state, action) => {
+        state.status = Statuses.FAILED;
         state.error = action.payload;
       });
   },
