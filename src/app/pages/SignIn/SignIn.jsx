@@ -1,27 +1,31 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 
 import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "@store/slices/authSlice";
 import { Statuses } from "@store/statuses/statuses";
-import { registerUser } from "@store/slices/authSlice";
 import { getErrorAuthMessage } from "@utils/errors";
 
 import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Alert from "react-bootstrap/Alert";
 import Spinner from "react-bootstrap/Spinner";
+import {
+  FaCheck,
+  FaTimes,
+  FaExclamationCircle,
+  FaEyeSlash,
+  FaEye,
+} from "react-icons/fa";
 
-import slyles from "./SingUp.module.scss";
+import styles from "./SignIn.module.scss";
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 const validate = (values) => {
   const errors = {};
-  if (!values.displayName) {
-    errors.displayName = "Name is required";
-  }
   if (!values.email) {
     errors.email = "Email is required";
   } else if (!emailRegex.test(values.email)) {
@@ -32,37 +36,31 @@ const validate = (values) => {
   } else if (values.password.length < 6) {
     errors.password = "Password must be at least 6 characters";
   }
-  if (!values.confirmPassword) {
-    errors.confirmPassword = "Confirm Password is required";
-  } else if (values.password !== values.confirmPassword) {
-    errors.confirmPassword = "Passwords must match";
-  }
   return errors;
 };
 
-const SignUp = () => {
+const SignIn = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { status, error } = useSelector((state) => state.auth);
+  const [showPassword, setShowPassword] = useState(false);
 
   const formik = useFormik({
     initialValues: {
-      displayName: "",
       email: "",
       password: "",
-      confirmPassword: "",
     },
     validate,
     onSubmit: (values, { setSubmitting }) => {
-      dispatch(registerUser(values))
+      dispatch(loginUser(values))
         .unwrap()
         .then(() => {
-          toast.success("Registration successful!");
+          toast.success("Login successful!");
           navigate("/notes");
         })
         .catch((error) => {
           const friendlyMessage = getErrorAuthMessage(error.code);
-          toast.error(`Registration failed: ${friendlyMessage}`);
+          toast.error(`Login failed: ${friendlyMessage}`);
         })
         .finally(() => {
           setSubmitting(false);
@@ -70,30 +68,15 @@ const SignUp = () => {
     },
   });
 
+  const clearField = (field) => {
+    formik.setFieldValue(field, "");
+  };
+
   return (
-    <Form onSubmit={formik.handleSubmit}>
-      <div className={slyles.container}>
-        <div className={slyles.entrance}>
-          <div className={slyles.entranceBlock}>
-            <InputGroup className="mb-3">
-              <input
-                type="text"
-                name="displayName"
-                placeholder="Name"
-                aria-label="Name"
-                aria-describedby="basic-name"
-                className="form-control"
-                value={formik.values.displayName}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                required
-              />
-              {formik.touched.displayName && formik.errors.displayName ? (
-                <Alert key="danger" variant="danger">
-                  {formik.errors.displayName}
-                </Alert>
-              ) : null}
-            </InputGroup>
+    <form onSubmit={formik.handleSubmit}>
+      <div className={styles.container}>
+        <div className={styles.entrance}>
+          <div className={styles.entranceBlock}>
             <InputGroup className="mb-3">
               <input
                 type="email"
@@ -106,16 +89,31 @@ const SignUp = () => {
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 required
+                autoComplete="off"
               />
+              {formik.values.email && (
+                <Button
+                  variant="outline-secondary"
+                  onClick={() => clearField("email")}>
+                  <FaTimes />
+                </Button>
+              )}
               {formik.touched.email && formik.errors.email ? (
-                <Alert key="danger" variant="danger">
-                  {formik.errors.email}
-                </Alert>
-              ) : null}
+                <>
+                  <FaExclamationCircle className="text-danger ml-2" />
+                  <Alert key="danger" variant="danger">
+                    {formik.errors.email}
+                  </Alert>
+                </>
+              ) : (
+                formik.touched.email && (
+                  <FaCheck className="text-success ml-2" />
+                )
+              )}
             </InputGroup>
             <InputGroup className="mb-3">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 placeholder="Password"
                 aria-label="Password"
@@ -125,31 +123,27 @@ const SignUp = () => {
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 required
+                autoComplete="off"
               />
+              <Button
+                variant="outline-secondary"
+                onClick={() => setShowPassword(!showPassword)}>
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </Button>
+              {formik.values.password && (
+                <Button
+                  variant="outline-secondary"
+                  onClick={() => clearField("password")}>
+                  <FaTimes />
+                </Button>
+              )}
               {formik.touched.password && formik.errors.password ? (
-                <Alert key="danger" variant="danger">
-                  {formik.errors.password}
-                </Alert>
-              ) : null}
-            </InputGroup>
-            <InputGroup className="mb-3">
-              <input
-                type="password"
-                name="confirmPassword"
-                placeholder="Confirm Password"
-                aria-label="Confirm Password"
-                aria-describedby="basic-confirm-password"
-                className="form-control"
-                value={formik.values.confirmPassword}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                required
-              />
-              {formik.touched.confirmPassword &&
-              formik.errors.confirmPassword ? (
-                <Alert key="danger" variant="danger">
-                  {formik.errors.confirmPassword}
-                </Alert>
+                <>
+                  <FaExclamationCircle className="text-danger ml-2" />
+                  <Alert key="danger" variant="danger">
+                    {formik.errors.password}
+                  </Alert>
+                </>
               ) : null}
             </InputGroup>
             {status === Statuses.FAILED && (
@@ -160,21 +154,26 @@ const SignUp = () => {
             <Button
               type="submit"
               variant="success"
-              disabled={formik.isSubmitting || status === Statuses.LOADING}>
+              disabled={
+                formik.isSubmitting ||
+                status === Statuses.LOADING ||
+                Object.keys(formik.errors).length > 0
+              }>
               {formik.isSubmitting || status === Statuses.LOADING ? (
                 <Spinner animation="border" size="sm" />
               ) : (
                 "Go"
               )}
             </Button>
-            <div className={slyles.links}>
-              <Link to="/signin">SignIn</Link>
+            <div className={styles.links}>
+              <Link to="/forgot-password">Forgot password?</Link>
+              <Link to="/signup">SignUp</Link>
             </div>
           </div>
         </div>
       </div>
-    </Form>
+    </form>
   );
 };
 
-export default SignUp;
+export default SignIn;

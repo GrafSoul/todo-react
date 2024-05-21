@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
@@ -31,6 +31,7 @@ const ForgotPassword = () => {
   const [emailSent, setEmailSent] = useState(false);
   const dispatch = useDispatch();
   const { status, error } = useSelector((state) => state.auth);
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
 
   const formik = useFormik({
     initialValues: {
@@ -55,6 +56,15 @@ const ForgotPassword = () => {
         });
     },
   });
+
+  useEffect(() => {
+    setIsSubmitDisabled(
+      formik.isSubmitting ||
+        status === Statuses.LOADING ||
+        Object.keys(formik.errors).length > 0 ||
+        !formik.values.email
+    );
+  }, [formik.isSubmitting, status, formik.errors, formik.values]);
 
   return (
     <div className={styles.container}>
@@ -95,7 +105,7 @@ const ForgotPassword = () => {
               <Button
                 type="submit"
                 variant="success"
-                disabled={formik.isSubmitting || status === Statuses.LOADING}>
+                disabled={isSubmitDisabled}>
                 {formik.isSubmitting || status === Statuses.LOADING ? (
                   <Spinner animation="border" size="sm" />
                 ) : (

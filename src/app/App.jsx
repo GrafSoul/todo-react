@@ -3,8 +3,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./layout/Layout";
 import Welcome from "./pages/Welcome";
 import Notes from "./pages/Notes";
-import SingIn from "./pages/SingIn";
-import SingUp from "./pages/SingUp";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
 import ForgotPassword from "./pages/ForgotPassword";
 import NotFound from "./pages/NotFound";
 import Users from "./pages/Users";
@@ -50,8 +50,8 @@ function App() {
                 </AdminRoute>
               }
             />
-            <Route path="/signin" element={<SingIn />} />
-            <Route path="/signup" element={<SingUp />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
