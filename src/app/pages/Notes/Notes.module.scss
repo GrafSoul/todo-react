@@ -1,24 +1,14 @@
 .container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
-.entrance {
-    width: 100%;
-    height: calc(100vh - 165px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.entranceBlock {
-    display: flex;
-    width: 100%;
-    max-width: 480px;
-    flex-direction: column;
-    button {
-        padding: 15px;
-        min-width: 144px;
-        margin: 10px 0;
-        text-transform: uppercase;
-    }
+
+.notesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #e9e9e9;
+  margin: 10px 0;
+  padding: 10px;
 }
