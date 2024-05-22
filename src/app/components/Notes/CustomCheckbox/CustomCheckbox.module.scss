@@ -1,0 +1,14 @@
+.checkbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  border: 2px solid black;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: white;
+
+  &.checked {
+    background-color: green;
+  }
+}

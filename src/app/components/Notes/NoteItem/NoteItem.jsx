@@ -1,27 +1,81 @@
+import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
-import CustomCheckbox from "../CustomCheckbox";
 import { FaTrash, FaEdit } from "react-icons/fa";
 
-const NoteItem = ({ title, checked, onCheckChange }) => {
+import CustomCheckbox from "@components/Notes/CustomCheckbox";
+import EditNoteModal from "@components/Modals/EditNoteModal";
+import ViewNoteModal from "@components/Modals/ViewNoteModal";
+import DeleteNoteModal from "@components/Modals/DeleteNoteModal";
+
+import styles from "./NoteItem.module.scss";
+
+const NoteItem = ({ note, onChangeNote }) => {
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const [currentNote, setCurrentNote] = useState({});
+
+  useEffect(() => {
+    setCurrentNote(note);
+  }, [note]);
+
+  const handleToggleViewNote = () => setShowViewModal(!showViewModal);
+  const handleToggleDeleteNote = () => setShowDeleteModal(!showDeleteModal);
+  const handleToggleEditNote = () => setShowEditModal(!showEditModal);
+
+  const handleDeleteNote = () => {
+    setShowDeleteModal(false);
+    console.log("Deleted");
+  };
+
+  const handleEditNote = () => {
+    setShowEditModal(false);
+    console.log("Edited");
+  };
+
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "10px",
-        backgroundColor: "#f5f5f5",
-        marginBottom: "5px",
-      }}>
-      <CustomCheckbox checked={checked} onChange={onCheckChange} />
-      <span style={{ flex: 1, marginLeft: "10px" }}>{title}</span>
-      <Button variant="danger" style={{ marginRight: "5px" }}>
-        <FaTrash />
-      </Button>
-      <Button variant="primary">
-        <FaEdit />
-      </Button>
-    </div>
+    <>
+      <div className={styles.noteItem}>
+        <CustomCheckbox
+          checked={note.checked}
+          onChange={() => onChangeNote(currentNote.id)}
+        />
+
+        <span className={styles.noteTitle} onClick={handleToggleViewNote}>
+          {note.title}
+        </span>
+
+        <Button
+          variant="danger"
+          className={styles.buttonDelete}
+          onClick={handleToggleDeleteNote}>
+          <FaTrash />
+        </Button>
+        <Button variant="primary" onClick={handleToggleEditNote}>
+          <FaEdit />
+        </Button>
+      </div>
+
+      <EditNoteModal
+        show={showEditModal}
+        onClose={handleToggleEditNote}
+        onSave={handleEditNote}
+        note={currentNote}
+      />
+
+      <DeleteNoteModal
+        show={showDeleteModal}
+        onClose={handleToggleDeleteNote}
+        onDelete={handleDeleteNote}
+      />
+
+      <ViewNoteModal
+        show={showViewModal}
+        onClose={handleToggleViewNote}
+        note={currentNote}
+      />
+    </>
   );
 };
 
