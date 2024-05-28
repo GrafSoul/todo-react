@@ -1,37 +1,39 @@
-import { useEffect, useState } from "react";
-
+import { useSelector } from "react-redux";
 import NoteItem from "@components/Notes/NoteItem";
-
 import styles from "./DayTab.module.scss";
 
-const DayTab = ({ day, notes }) => {
-  const [currentNotes, setCurrentNote] = useState([]);
+const DayTab = ({ dayIndex }) => {
+  const filter = useSelector((state) => state.notes.filter);
+  const notes = useSelector((state) => state.notes.data[dayIndex]?.notes || []);
 
-  useEffect(() => {
-    setCurrentNote(notes);
-  }, [day, notes]);
-
-  const handleChangeNote = (id) => {
-    currentNotes.forEach((note) => {
-      if (note.id === id) {
-        note.checked = !note.checked;
-      }
-    });
-    setCurrentNote([...currentNotes]);
+  const filterNotes = (notes, filter) => {
+    switch (filter) {
+      case "ready":
+        return notes.filter((note) => note.checked);
+      case "notReady":
+        return notes.filter((note) => !note.checked);
+      case "all":
+      default:
+        return notes;
+    }
   };
 
+  const filteredNotes = filterNotes(notes, filter);
+
   return (
-    <>
-      <div className={styles.dayTab}>
-        {currentNotes.map((note) => (
+    <div className={styles.dayTab}>
+      {filteredNotes && filteredNotes.length > 0 ? (
+        filteredNotes.map((note, index) => (
           <NoteItem
-            key={`${day}_${note.id}`}
+            key={`${dayIndex}-${index}`}
             note={note}
-            onChangeNote={handleChangeNote}
+            dayIndex={dayIndex}
           />
-        ))}
-      </div>
-    </>
+        ))
+      ) : (
+        <p>No notes available</p>
+      )}
+    </div>
   );
 };
 

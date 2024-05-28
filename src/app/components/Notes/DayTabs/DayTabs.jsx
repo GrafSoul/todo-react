@@ -1,171 +1,51 @@
-import { useState } from "react";
-import { Button, Tabs, Tab } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Button, Tabs, Tab, Alert } from "react-bootstrap";
 import { FaPlus, FaTrash } from "react-icons/fa";
+import { Statuses } from "@store/statuses/statuses";
+import {
+  fetchNotes,
+  addNoteAction,
+  clearNotesForDayAction,
+} from "@store/slices/notesSlice";
 
 import DayTab from "@components/Notes/DayTab";
-
 import AddNoteModal from "@components/Modals/AddNoteModal";
 import ClearNotesModal from "@components/Modals/ClearNotesModal";
+import Loading from "@components/Loading/Loading";
 
 import styles from "./DayTabs.module.scss";
-
-const dataWithNotes = [
-  {
-    id: 1,
-    title: "monday",
-    label: "Пн",
-    notes: [
-      {
-        id: 1,
-        title: "Title name",
-        text: "lorem ipsum lorem ipsum",
-        checked: false,
-      },
-      {
-        id: 2,
-        title: "Title name",
-        text: "lorem ipsum lorem ipsum",
-        checked: true,
-      },
-    ],
-  },
-  {
-    id: 2,
-    title: "tuesday",
-    label: "Вт",
-    notes: [
-      {
-        id: 1,
-        title: "Title name",
-        text: "lorem ipsum lorem ipsum",
-        checked: false,
-      },
-      {
-        id: 2,
-        title: "Title name",
-        text: "lorem ipsum lorem ipsum",
-        checked: true,
-      },
-    ],
-  },
-  {
-    id: 3,
-    title: "wednesday",
-    label: "Ср",
-    notes: [
-      {
-        id: 1,
-        title: "Title name",
-        text: "lorem ipsum lorem ipsum",
-        checked: false,
-      },
-      {
-        id: 2,
-        title: "Title name",
-        text: "lorem ipsum lorem ipsum",
-        checked: true,
-      },
-    ],
-  },
-  {
-    id: 4,
-    title: "thursday",
-    label: "Чт",
-    notes: [
-      {
-        id: 1,
-        title: "Title name",
-        text: "lorem ipsum lorem ipsum",
-        checked: false,
-      },
-      {
-        id: 2,
-        title: "Title name",
-        text: "lorem ipsum lorem ipsum",
-        checked: true,
-      },
-    ],
-  },
-  {
-    id: 5,
-    title: "friday",
-    label: "Пт",
-    notes: [
-      {
-        id: 1,
-        title: "Title name",
-        text: "lorem ipsum lorem ipsum",
-        checked: false,
-      },
-      {
-        id: 2,
-        title: "Title name",
-        text: "lorem ipsum lorem ipsum",
-        checked: true,
-      },
-    ],
-  },
-  {
-    id: 6,
-    title: "saturday",
-    label: "Суб",
-    notes: [
-      {
-        id: 1,
-        title: "Title name",
-        text: "lorem ipsum lorem ipsum",
-        checked: false,
-      },
-      {
-        id: 2,
-        title: "Title name",
-        text: "lorem ipsum lorem ipsum",
-        checked: true,
-      },
-    ],
-  },
-  {
-    id: 7,
-    title: "sunday",
-    label: "Вос",
-    notes: [
-      {
-        id: 1,
-        title: "Title name",
-        text: "lorem ipsum lorem ipsum",
-        checked: false,
-      },
-      {
-        id: 2,
-        title: "Title name",
-        text: "lorem ipsum lorem ipsum",
-        checked: true,
-      },
-    ],
-  },
-];
 
 const DayTabs = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showClearModal, setShowClearModal] = useState(false);
-  const [activeTab, setActiveTab] = useState("monday");
+  const [activeTab, setActiveTab] = useState(0);
+  const dispatch = useDispatch();
+  const {
+    data: dataWithNotes = {},
+    status,
+    error,
+  } = useSelector((state) => state.notes || {});
+
+  useEffect(() => {
+    dispatch(fetchNotes());
+  }, [dispatch]);
 
   const handleToggleAddNote = () => setShowAddModal(!showAddModal);
   const handleToggleClearNotes = () => setShowClearModal(!showClearModal);
 
-  const handleAddNote = () => {
+  const handleAddNote = (note) => {
+    dispatch(addNoteAction({ day: activeTab, note }));
     setShowAddModal(false);
-    console.log("Added");
   };
 
   const handleClearNotes = () => {
+    dispatch(clearNotesForDayAction({ dayIndex: activeTab }));
     setShowClearModal(false);
-    console.log("Cleared");
   };
 
-  const handleTabSelect = (key) => {
-    setActiveTab(key);
-    console.log("Active Tab:", activeTab);
+  const handleTabSelect = (index) => {
+    setActiveTab(index);
   };
 
   return (
@@ -175,7 +55,7 @@ const DayTabs = () => {
         variant="success"
         id="button-add"
         className={styles.buttonAdd}
-        onClick={() => handleToggleAddNote("monday")}>
+        onClick={handleToggleAddNote}>
         <FaPlus /> Add
       </Button>
 
@@ -188,21 +68,39 @@ const DayTabs = () => {
         <FaTrash /> Clear
       </Button>
 
-      <Tabs defaultActiveKey="monday" onSelect={handleTabSelect}>
-        {dataWithNotes.map((day, index) => (
-          <Tab
-            key={`${day.title}_${index}`}
-            eventKey={day.title}
-            title={day.label}>
-            <DayTab day={day.title} notes={day.notes} />
-          </Tab>
-        ))}
-      </Tabs>
+      {status === Statuses.LOADING && (
+        <div className={styles.preloader}>
+          <Loading />
+        </div>
+      )}
+
+      {status === Statuses.FAILED && (
+        <Alert variant="danger" className={styles.errorMessage}>
+          Error: {error}
+        </Alert>
+      )}
+
+      {status === Statuses.SUCCEEDED && (
+        <Tabs activeKey={activeTab} onSelect={handleTabSelect}>
+          {Object.keys(dataWithNotes).map((day, index) => {
+            const dayData = dataWithNotes[day];
+            if (!dayData || !dayData.label || !dayData.title) {
+              console.error(`Missing required data for day ${day}:`, dayData);
+              return null;
+            }
+            return (
+              <Tab key={day} eventKey={index} title={dayData.label}>
+                <DayTab dayIndex={index} />
+              </Tab>
+            );
+          })}
+        </Tabs>
+      )}
 
       <AddNoteModal
         show={showAddModal}
-        onSaveNote={handleToggleAddNote}
-        onClose={handleAddNote}
+        onSaveNote={handleAddNote}
+        onClose={handleToggleAddNote}
       />
 
       <ClearNotesModal

@@ -11,6 +11,16 @@ import {
 
 import { ref, set, get, child } from "firebase/database";
 
+const initialData = [
+  { id: 1, title: "monday", label: "Пн", notes: [] },
+  { id: 2, title: "tuesday", label: "Вт", notes: [] },
+  { id: 3, title: "wednesday", label: "Ср", notes: [] },
+  { id: 4, title: "thursday", label: "Чт", notes: [] },
+  { id: 5, title: "friday", label: "Пт", notes: [] },
+  { id: 6, title: "saturday", label: "Суб", notes: [] },
+  { id: 7, title: "sunday", label: "Вос", notes: [] },
+];
+
 export const register = async (email, password, displayName) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(
@@ -34,6 +44,8 @@ export const register = async (email, password, displayName) => {
       email,
       role,
     });
+
+    await set(ref(database, `users/${user.uid}/notes`), initialData);
 
     return {
       uid: user.uid,
