@@ -8,7 +8,7 @@ const ViewNoteModal = ({ show, note, onClose }) => {
         <Modal.Title>{note.title}</Modal.Title>
       </Modal.Header>
       <Modal.Body className={styles.modalBody}>
-        <p>{note.text}</p>
+        <div dangerouslySetInnerHTML={{ __html: note.text }} />
       </Modal.Body>
       <Modal.Footer className={styles.modalFooter}>
         <Button variant="secondary" onClick={onClose}>

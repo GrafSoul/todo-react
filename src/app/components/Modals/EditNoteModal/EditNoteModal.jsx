@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { editorConfiguration } from "@utils/config";
 import styles from "./EditNoteModal.module.scss";
 
 const EditNoteModal = ({ show, onClose, onSave, note }) => {
@@ -39,12 +42,17 @@ const EditNoteModal = ({ show, onClose, onSave, note }) => {
           </Form.Group>
           <Form.Group controlId="formText">
             <Form.Label>Text</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              name="text"
-              value={updatedNote.text}
-              onChange={handleChange}
+            <CKEditor
+              editor={ClassicEditor}
+              data={updatedNote.text}
+              config={editorConfiguration}
+              onChange={(event, editor) => {
+                const data = editor.getData();
+                setUpdatedNote((prev) => ({
+                  ...prev,
+                  text: data,
+                }));
+              }}
             />
           </Form.Group>
         </Form>
