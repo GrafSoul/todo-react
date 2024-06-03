@@ -25,5 +25,9 @@ module.exports = {
             { allowConstantExport: true },
         ],
         'jest/no-focused-tests': 'off',
+        'import/no-unresolved': [
+            'error',
+            { ignore: ['^@testing-library/jest-dom$'] },
+        ],
     },
 };
