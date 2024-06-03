@@ -32,13 +32,13 @@ describe('DayTab', () => {
         return render(<Provider store={store}>{component}</Provider>);
     };
 
-    test('renders DayTab component with notes', () => {
+    it('renders DayTab component with notes', () => {
         renderWithStore(<DayTab dayIndex={0} />);
 
         expect(screen.getAllByText(/NoteItem/i)).toHaveLength(2);
     });
 
-    test('renders "No notes available" when no notes are present', () => {
+    it('renders "No notes available" when no notes are present', () => {
         store = mockStore({
             notes: {
                 filter: 'all',
@@ -51,7 +51,7 @@ describe('DayTab', () => {
         expect(screen.getByText(/No notes available/i)).toBeInTheDocument();
     });
 
-    test('filters and renders only checked notes when filter is "ready"', () => {
+    it('filters and renders only checked notes when filter is "ready"', () => {
         store = mockStore({
             notes: {
                 filter: 'ready',
@@ -71,7 +71,7 @@ describe('DayTab', () => {
         expect(screen.getAllByText(/NoteItem/i)).toHaveLength(1);
     });
 
-    test('filters and renders only unchecked notes when filter is "notReady"', () => {
+    it('filters and renders only unchecked notes when filter is "notReady"', () => {
         store = mockStore({
             notes: {
                 filter: 'notReady',

@@ -17,7 +17,7 @@ describe('ClearNotesModal', () => {
         );
     });
 
-    test('renders ClearNotesModal component with correct title and text', () => {
+    it('renders ClearNotesModal component with correct title and text', () => {
         expect(screen.getByText(/Confirm Clear/i)).toBeInTheDocument();
         expect(
             screen.getByText(/Are you sure you want to clear this notes\?/i),
@@ -30,17 +30,17 @@ describe('ClearNotesModal', () => {
         ).toBeInTheDocument();
     });
 
-    test('calls onClose when the cancel button is clicked', () => {
+    it('calls onClose when the cancel button is clicked', () => {
         fireEvent.click(screen.getByRole('button', { name: /Cancel/i }));
         expect(handleClose).toHaveBeenCalled();
     });
 
-    test('calls onClear when the clear button is clicked', () => {
+    it('calls onClear when the clear button is clicked', () => {
         fireEvent.click(screen.getByRole('button', { name: /Clear/i }));
         expect(handleClear).toHaveBeenCalled();
     });
 
-    test('calls onClose when the modal is dismissed', () => {
+    it('calls onClose when the modal is dismissed', () => {
         fireEvent.click(screen.getByLabelText(/Close/i));
         expect(handleClose).toHaveBeenCalled();
     });

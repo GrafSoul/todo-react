@@ -6,7 +6,7 @@ import CustomCheckbox from './CustomCheckbox';
 describe('CustomCheckbox', () => {
     const handleChange = jest.fn();
 
-    test('renders CustomCheckbox component', () => {
+    it('renders CustomCheckbox component', () => {
         render(<CustomCheckbox checked={false} onChange={handleChange} />);
 
         const checkbox = screen.getByRole('checkbox');
@@ -14,7 +14,7 @@ describe('CustomCheckbox', () => {
         expect(checkbox).not.toBeChecked();
     });
 
-    test('applies checked class when checkbox is checked', () => {
+    it('applies checked class when checkbox is checked', () => {
         render(<CustomCheckbox checked={true} onChange={handleChange} />);
 
         const checkbox = screen.getByRole('checkbox');
@@ -23,7 +23,7 @@ describe('CustomCheckbox', () => {
         expect(checkbox).toHaveClass('checked');
     });
 
-    test('does not apply checked class when checkbox is unchecked', () => {
+    it('does not apply checked class when checkbox is unchecked', () => {
         render(<CustomCheckbox checked={false} onChange={handleChange} />);
 
         const checkbox = screen.getByRole('checkbox');
@@ -32,7 +32,7 @@ describe('CustomCheckbox', () => {
         expect(checkbox).not.toHaveClass('checked');
     });
 
-    test('calls onChange when checkbox is clicked', () => {
+    it('calls onChange when checkbox is clicked', () => {
         render(<CustomCheckbox checked={false} onChange={handleChange} />);
 
         const checkbox = screen.getByRole('checkbox');

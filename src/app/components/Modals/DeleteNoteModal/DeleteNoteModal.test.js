@@ -17,7 +17,7 @@ describe('DeleteNoteModal', () => {
         );
     });
 
-    test('renders DeleteNoteModal component with correct title and text', () => {
+    it('renders DeleteNoteModal component with correct title and text', () => {
         expect(screen.getByText(/Confirm Deletion/i)).toBeInTheDocument();
         expect(
             screen.getByText(/Are you sure you want to delete this note\?/i),
@@ -30,17 +30,17 @@ describe('DeleteNoteModal', () => {
         ).toBeInTheDocument();
     });
 
-    test('calls onClose when the cancel button is clicked', () => {
+    it('calls onClose when the cancel button is clicked', () => {
         fireEvent.click(screen.getByRole('button', { name: /Cancel/i }));
         expect(handleClose).toHaveBeenCalled();
     });
 
-    test('calls onDelete when the delete button is clicked', () => {
+    it('calls onDelete when the delete button is clicked', () => {
         fireEvent.click(screen.getByRole('button', { name: /Delete/i }));
         expect(handleDelete).toHaveBeenCalled();
     });
 
-    test('calls onClose when the modal is dismissed', () => {
+    it('calls onClose when the modal is dismissed', () => {
         fireEvent.click(screen.getByLabelText(/Close/i));
         expect(handleClose).toHaveBeenCalled();
     });

@@ -17,7 +17,7 @@ describe('LogoutModal', () => {
         );
     });
 
-    test('renders LogoutModal component with correct title and text', () => {
+    it('renders LogoutModal component with correct title and text', () => {
         expect(screen.getByText(/Confirm Logout/i)).toBeInTheDocument();
         expect(
             screen.getByText(/Are you sure you want to log out\?/i),
@@ -30,17 +30,17 @@ describe('LogoutModal', () => {
         ).toBeInTheDocument();
     });
 
-    test('calls handleClose when the cancel button is clicked', () => {
+    it('calls handleClose when the cancel button is clicked', () => {
         fireEvent.click(screen.getByRole('button', { name: /Cancel/i }));
         expect(handleClose).toHaveBeenCalled();
     });
 
-    test('calls handleLogout when the logout button is clicked', () => {
+    it('calls handleLogout when the logout button is clicked', () => {
         fireEvent.click(screen.getByRole('button', { name: /Logout/i }));
         expect(handleLogout).toHaveBeenCalled();
     });
 
-    test('calls handleClose when the modal is dismissed', () => {
+    it('calls handleClose when the modal is dismissed', () => {
         fireEvent.click(screen.getByLabelText(/Close/i));
         expect(handleClose).toHaveBeenCalled();
     });
