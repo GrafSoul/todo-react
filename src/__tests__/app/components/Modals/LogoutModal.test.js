@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import LogoutModal from './LogoutModal';
+import LogoutModal from '../../../../app/components/Modals/LogoutModal/LogoutModal';
 
 describe('LogoutModal', () => {
     const handleClose = jest.fn();

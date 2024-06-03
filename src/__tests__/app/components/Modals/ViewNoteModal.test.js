@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import ViewNoteModal from './ViewNoteModal';
+import ViewNoteModal from '../../../../app/components/Modals/ViewNoteModal/ViewNoteModal';
 
 describe('ViewNoteModal', () => {
     const handleClose = jest.fn();

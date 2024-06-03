@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import CustomCheckbox from './CustomCheckbox';
+import CustomCheckbox from '../../../../app/components/Notes/CustomCheckbox/CustomCheckbox';
 
 describe('CustomCheckbox', () => {
     const handleChange = jest.fn();

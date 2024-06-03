@@ -1,32 +1,32 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import ClearNotesModal from './ClearNotesModal';
+import DeleteNoteModal from '../../../../app/components/Modals/DeleteNoteModal/DeleteNoteModal';
 
-describe('ClearNotesModal', () => {
+describe('DeleteNoteModal', () => {
     const handleClose = jest.fn();
-    const handleClear = jest.fn();
+    const handleDelete = jest.fn();
 
     beforeEach(() => {
         render(
-            <ClearNotesModal
+            <DeleteNoteModal
                 show={true}
                 onClose={handleClose}
-                onClear={handleClear}
+                onDelete={handleDelete}
             />,
         );
     });
 
-    it('renders ClearNotesModal component with correct title and text', () => {
-        expect(screen.getByText(/Confirm Clear/i)).toBeInTheDocument();
+    it('renders DeleteNoteModal component with correct title and text', () => {
+        expect(screen.getByText(/Confirm Deletion/i)).toBeInTheDocument();
         expect(
-            screen.getByText(/Are you sure you want to clear this notes\?/i),
+            screen.getByText(/Are you sure you want to delete this note\?/i),
         ).toBeInTheDocument();
         expect(
             screen.getByRole('button', { name: /Cancel/i }),
         ).toBeInTheDocument();
         expect(
-            screen.getByRole('button', { name: /Clear/i }),
+            screen.getByRole('button', { name: /Delete/i }),
         ).toBeInTheDocument();
     });
 
@@ -35,9 +35,9 @@ describe('ClearNotesModal', () => {
         expect(handleClose).toHaveBeenCalled();
     });
 
-    it('calls onClear when the clear button is clicked', () => {
-        fireEvent.click(screen.getByRole('button', { name: /Clear/i }));
-        expect(handleClear).toHaveBeenCalled();
+    it('calls onDelete when the delete button is clicked', () => {
+        fireEvent.click(screen.getByRole('button', { name: /Delete/i }));
+        expect(handleDelete).toHaveBeenCalled();
     });
 
     it('calls onClose when the modal is dismissed', () => {

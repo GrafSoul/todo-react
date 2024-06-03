@@ -1,5 +1,5 @@
 // usersService.test.js
-import { getUsers } from './usersService';
+import { getUsers } from '../../services/usersService';
 import { ref, get } from 'firebase/database';
 
 // Mock Firebase functions
@@ -9,7 +9,7 @@ jest.mock('firebase/database', () => ({
 }));
 
 // Mock Firebase database
-jest.mock('./firebase', () => ({
+jest.mock('../../services/firebase', () => ({
     database: {},
 }));
 
