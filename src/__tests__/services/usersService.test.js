@@ -1,14 +1,15 @@
 // usersService.test.js
+
 import { getUsers } from '../../services/usersService';
 import { ref, get } from 'firebase/database';
 
-// Mock Firebase functions
+// Замокируем Firebase функции
 jest.mock('firebase/database', () => ({
     ref: jest.fn(),
     get: jest.fn(),
 }));
 
-// Mock Firebase database
+// Замокируем Firebase модуль
 jest.mock('../../services/firebase', () => ({
     database: {},
 }));
